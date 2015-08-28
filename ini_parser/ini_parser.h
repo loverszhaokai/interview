@@ -2,6 +2,7 @@
 #define QIHOO_INI_PARSER_H_
 
 #include <string>
+#include <map>
 
 namespace qh
 {
@@ -37,6 +38,7 @@ namespace qh
         const std::string& Get(const std::string& section, const std::string& key, bool* found);
 
     private:
+		std::map<std::string, std::string> kvalue;
     };
 }
 
