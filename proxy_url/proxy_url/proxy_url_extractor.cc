@@ -100,6 +100,42 @@ namespace qh
     {
 #if 1
         //TODO 请面试者在这里添加自己的代码实现以完成所需功能
+        Tokener token(raw_url);
+        token.skipTo('?');
+        token.next(); //skip one char : '?'
+        std::string key;
+        while (!token.isEnd()) {
+            key = token.nextString('=');
+
+			if (key.find_last_of('&') != std::string::npos)
+				key = key.substr(key.find_last_of('&') + 1);
+
+            if (keys.find(key) != keys.end()) {
+                /**
+                * case 1:
+                *  raw_url="http://www.microsofttranslator.com/bv.aspx?from=&to=zh-chs&a=http://hnujug.com/&xx=yy"
+                *  sub_url="http://hnujug.com/"
+                */
+                sub_url = token.nextString('&');
+
+                if (sub_url.empty()) {
+					token.back();
+					char last_c = token.current();
+					token.next();
+
+					if (last_c != '&') {
+						/**
+	                    * case 2:
+	                    * raw_url="http://www.microsofttranslator.com/bv.aspx?from=&to=zh-chs&a=http://hnujug.com/"
+	                    * sub_url="http://hnujug.com/"
+	                    */
+	                    sub_url = token.nextString();
+					}
+                }
+            }
+            token.skipTo('&');
+            token.next();//skip one char : '&'
+        }
 #else
         //这是一份参考实现，但在特殊情况下工作不能符合预期
         Tokener token(raw_url);
